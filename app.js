@@ -1,11 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const indexRouter = require("./routes/index.js");
 const app = express();
 const { PORT = 3001 } = process.env;
 
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
-});
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
   .then(() => {
@@ -14,3 +12,8 @@ mongoose
   .catch((e) => {
     console.error(e);
   });
+
+app.use("/", indexRouter);
+app.listen(PORT, () => {
+  console.log(`Server listening on ${PORT}`);
+});
