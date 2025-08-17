@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(value) {
-        return validator.isURL(value);
+        return true; //validator.isURL(value);
       },
     },
   },

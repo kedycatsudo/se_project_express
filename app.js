@@ -12,7 +12,7 @@ mongoose
   .catch((e) => {
     console.error(e);
   });
-
+app.use(express.json());
 app.use("/", indexRouter);
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
