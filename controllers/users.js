@@ -19,25 +19,22 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
+      console.log(err.name);
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
+        res.status(400).send({ message: err.message });
+      } else {
+        res.status(500).send({ message: err.message });
       }
-
-      return res.status(500).send({ message: err.message });
     });
 };
-
+//GET user by id
 const getUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        // handle it
-      } else {
-        //handle the cast error
-      }
+      console.log(err.name);
 
       return res.status(500).send({ message: err.message });
     });
