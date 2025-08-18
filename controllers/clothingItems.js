@@ -1,28 +1,32 @@
-const ClothingItem = require("../models/clothingItem");
+const clothingItem = require("../models/clothingItem");
 const createItem = (req, res) => {
-  console.log(req);
-  console.log(req.body);
-  const { name, weather, imgUrl } = req.body;
-  ClothingItem.create({ name: name, weather: weather, imgUrl: imgUrl }).then(
-    (item) => {
-      console.log(item);
-      res.send({ data: item }).catch((err) => {
-        res.status(500).send({ message: "Error from createItem", err });
-      });
-    }
-  );
+  const { name, weather, imageUrl } = req.body;
+  clothingItem
+    .create({ name: name, weather: weather, imageUrl: imageUrl })
+    .then((item) => {
+      res.status(200).send({ data: item });
+    })
+    .catch((err) => {
+      res.status(400).send({ message: "Error from createItem", err });
+    });
 };
 
 const getItems = (req, res) => {
-  ClothingItem.find({})
+  clothingItem
+    .find({})
     .then((items) => res.status(200).send(items))
-    .catch((err) => res.status(500).send({ message: "Get Items Failed", err }));
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.status(400).send({ message: err.message });
+      }
+    });
 };
 
 const updateItem = (req, res) => {
   const { itemId } = req.params;
   const { imgURL } = req.body;
-  ClothingItem.findByIdAndUpdate(itemId, { $set: { imgURL } })
+  clothingItem
+    .findByIdAndUpdate(itemId, { $set: { imgURL } })
     .orFail()
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) =>
@@ -31,12 +35,21 @@ const updateItem = (req, res) => {
 };
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  console.log(itemId);
-  ClothingItem.findByIdAndDelete(itemId)
+  clothingItem
+    .findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(204).send({}))
-    .catch((err) =>
-      res.status(500).send({ message: "Error from deleteItem", err })
-    );
+    .then(() => {
+      res.status(200).send({ message: `item  deleted.` });
+    })
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.status(400).send({ message: "No item found with this id.", err });
+      } else if (err.name === "DocumentNotFoundError") {
+        console.log(err.message);
+        res.status(404).send({ message: `Item not found` });
+      } else {
+        res.status(500).send({ message: "Error from deleteItem", err });
+      }
+    });
 };
 module.exports = { createItem, getItems, updateItem, deleteItem };

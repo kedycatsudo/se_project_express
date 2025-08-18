@@ -1,4 +1,6 @@
 const router = require("express").Router();
+const { likeItem, dislikeItem } = require("../controllers/likes");
+
 const {
   createItem,
   getItems,
@@ -16,5 +18,9 @@ router.get("/", getItems);
 router.put("/:itemId", updateItem);
 
 //DELETE
-router.put("/:itemId", deleteItem);
+router.delete("/:itemId", deleteItem);
+
+//LIKES
+router.put("/:itemId/likes", likeItem);
+router.delete("/:itemId/likes", dislikeItem);
 module.exports = router;

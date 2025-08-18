@@ -6,9 +6,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator(value) {
-        return true; //validator.isURL(value);
-      },
+      validator: (v) => validator.isURL(v),
+      message: "Link is not a valid",
     },
   },
 });

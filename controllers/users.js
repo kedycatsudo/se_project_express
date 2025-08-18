@@ -30,13 +30,18 @@ const createUser = (req, res) => {
 //GET user by id
 const getUser = (req, res) => {
   const { userId } = req.params;
-  User.findById(userId)
-    .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      console.error(err);
-      console.log(err.name);
 
-      return res.status(500).send({ message: err.message });
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        res.status(404).send({ message: "User Not Found" });
+      }
+      res.status(200).send(user);
+    })
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.status(400).send({ message: err.message });
+      }
     });
 };
 module.exports = { getUsers, createUser, getUser };
