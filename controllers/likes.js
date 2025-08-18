@@ -20,9 +20,7 @@ module.exports.likeItem = (req, res) => {
         res.status(400).send({ message: "ItemId is not valid" });
       } else if (err.name === "DocumentNotFoundError") {
         res.status(404).send({ message: `Item is not exist` });
-      } else {
-        res.status(500).send({ message: err.message });
-      }
+      } else res.status(500).send({ message: err.message });
     });
 };
 module.exports.dislikeItem = (req, res) => {

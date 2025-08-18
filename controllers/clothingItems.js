@@ -1,8 +1,9 @@
 const clothingItem = require("../models/clothingItem");
+
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   clothingItem
-    .create({ name: name, weather: weather, imageUrl: imageUrl })
+    .create({ name, weather, imageUrl })
     .then((item) => {
       res.status(200).send({ data: item });
     })
