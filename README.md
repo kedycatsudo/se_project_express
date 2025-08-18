@@ -1,9 +1,18 @@
-# WTWR (What to Wear?): Back End
-The back-end project is focused on creating a server for the WTWR application. You’ll gain a deeper understanding of how to work with databases, set up security and testing, and deploy web applications on a remote machine. The eventual goal is to create a server with an API and user authorization.
-## Running the Project
-`npm run start` — to launch the server 
+Technologies and Techniques Used
+This backend project is built with the following technologies and tools:
 
-`npm run dev` — to launch the server with the hot reload feature
-
-### Testing
-Before committing your code, make sure you edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint you're currently working on. For ex. 12
+Node.js: JavaScript runtime environment for building scalable server-side applications.
+Express.js: Fast, unopinionated, minimalist web framework for Node.js, used to create the RESTful API and handle routing.
+MongoDB: NoSQL document database for storing application data.
+Mongoose: ODM (Object Data Modeling) library for MongoDB and Node.js, used for schema definition, validation, and database interaction.
+Validator: Library for string validation and sanitization, used to validate user input (e.g., URLs).
+Nodemon: Utility that automatically restarts the server during development when file changes are detected.
+ESLint: Linter for identifying and fixing code quality and style issues.
+Prettier: Code formatter to ensure consistent code style.
+Airbnb JavaScript Style Guide: Enforced via ESLint for best practices and code consistency.
+Techniques
+RESTful API Design: Follows REST principles for resource-based routing and HTTP status codes.
+Error Handling: Centralized and consistent error handling for validation, database, and server errors.
+Data Validation: Uses Mongoose schema validation and the validator library to ensure data integrity.
+Modular Structure: Organized codebase with separate folders for controllers, models, routes, and utilities.
+Environment Variables: (If used) For configuration and sensitive data management.

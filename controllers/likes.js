@@ -1,5 +1,5 @@
 const clothingItem = require("../models/clothingItem");
-
+const errors = require("../utils/errors");
 module.exports.likeItem = (req, res) => {
   clothingItem
     .findByIdAndUpdate(
@@ -11,16 +11,25 @@ module.exports.likeItem = (req, res) => {
     )
     .then((item) => {
       if (!item) {
-        return res.status(404).send({ message: "Item not found" });
+        return res
+          .status(errors.NOT_FOUND_ERROR_CODE)
+          .send({ message: "Item not found" });
       }
-      res.status(200).send(item);
+      res.status(errors.OK_SUCCESS_CODE).send(item);
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(400).send({ message: "ItemId is not valid" });
+        res
+          .status(errors.BAD_REQUEST_ERROR_CODE)
+          .send({ message: "ItemId is not valid" });
       } else if (err.name === "DocumentNotFoundError") {
-        res.status(404).send({ message: `Item is not exist` });
-      } else res.status(500).send({ message: err.message });
+        res
+          .status(errors.NOT_FOUND_ERROR_CODE)
+          .send({ message: `Item is not exist` });
+      } else
+        res
+          .status(errors.INTERNAL_SERVER_ERROR_CODE)
+          .send({ message: err.message });
     });
 };
 module.exports.dislikeItem = (req, res) => {
@@ -34,15 +43,21 @@ module.exports.dislikeItem = (req, res) => {
     )
     .then((item) => {
       if (!item) {
-        return res.status(404).send({ message: "item not exist" });
+        return res
+          .status(errors.NOT_FOUND_ERROR_CODE)
+          .send({ message: "item not exist" });
       }
       res.send(item);
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(400).send({ message: err.message });
+        res
+          .status(errors.BAD_REQUEST_ERROR_CODE)
+          .send({ message: err.message });
       } else {
-        res.status(400().send({ message: err.message }));
+        res
+          .status(errors.BAD_REQUEST_ERROR_CODE)
+          .send({ message: err.message });
       }
     });
 };

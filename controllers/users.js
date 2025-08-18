@@ -1,28 +1,34 @@
 const User = require("../models/user");
-
+const errors = require("../utils/errors");
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => {
-      res.status(200).send(users);
+      res.status(errors.OK_SUCCESS_CODE).send(users);
     })
     .catch((err) => {
       console.error(err);
-      return res.status(500).send({ message: err.message });
+      res
+        .status(errors.INTERNAL_SERVER_ERROR_CODE)
+        .send({ message: "An error occurred on the server" });
     });
 };
 const createUser = (req, res) => {
   const { name, avatar } = req.body;
   User.create({ name, avatar })
     .then((user) => {
-      res.status(201).send(user);
+      res.status(errors.CREATED_SUCCESS_CODE).send(user);
     })
     .catch((err) => {
       console.error(err);
       console.log(err.name);
       if (err.name === "ValidationError") {
-        res.status(400).send({ message: err.message });
+        return res
+          .status(errors.BAD_REQUEST_ERROR_CODE)
+          .send({ message: err.message });
       } else {
-        res.status(500).send({ message: err.message });
+        return res
+          .status(errors.INTERNAL_SERVER_ERROR_CODE)
+          .send({ message: err.message });
       }
     });
 };
@@ -32,14 +38,21 @@ const getUser = (req, res) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        res.status(404).send({ message: "User Not Found" });
+        return res
+          .status(errors.NOT_FOUND_ERROR_CODE)
+          .send({ message: "User Not Found" });
       }
-      res.status(200).send(user);
+      return res.status(errors.OK_SUCCESS_CODE).send(user);
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(400).send({ message: err.message });
+        return res
+          .status(errors.BAD_REQUEST_ERROR_CODE)
+          .send({ message: err.message });
       }
+      return res
+        .status(errors.INTERNAL_SERVER_ERROR_CODE)
+        .send({ message: "An error occurred on the server" });
     });
 };
 module.exports = { getUsers, createUser, getUser };
