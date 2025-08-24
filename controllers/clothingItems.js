@@ -1,3 +1,20 @@
+// Hello, I realized that .catch block is repeating. I was thinking to write
+// a function that takes the catch as an argumant and filter this .catch((err) => {
+// if (err.name === "CastError") {
+// return res
+//  .status(errors.BAD_REQUEST_ERROR_CODE)
+//  .send({ message: "Invalid ID format" });
+// }
+// if (err.name === "ValidationError") {
+//  return res.status(errors.BAD_REQUEST_ERROR_CODE).send({ message: "Validation failed" });
+//  }
+//  if (err.name === "DocumentNotFoundError") {
+//    return res.status(errors.NOT_FOUND_ERROR_CODE).send({ message: "Resource not found" });
+//  }
+//  return res.status(errors.INTERNAL_SERVER_ERROR_CODE).send({ message: "An error has occurred on the server" });
+// });
+// and return the neccesary one. That would fix visual problem in the code, that would make it also dynamic.
+
 const clothingItem = require("../models/clothingItem");
 
 const errors = require("../utils/errors");
@@ -9,8 +26,13 @@ const createItem = (req, res) => {
     .then((item) => {
       res.status(errors.CREATED_SUCCESS_CODE).send({ data: item });
     })
-    .catch(() => {
-      res
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res
+          .status(errors.BAD_REQUEST_ERROR_CODE)
+          .send({ message: "Validation failed" });
+      }
+      return res
         .status(errors.INTERNAL_SERVER_ERROR_CODE)
         .send({ message: "An error has occurred on the server" });
     });
@@ -24,7 +46,7 @@ const getItems = (req, res) => {
       if (err.name === "CastError") {
         return res
           .status(errors.BAD_REQUEST_ERROR_CODE)
-          .send({ message: err.message });
+          .send({ message: "Invalid ID format" });
       }
       return res
         .status(errors.INTERNAL_SERVER_ERROR_CODE)
@@ -39,11 +61,21 @@ const updateItem = (req, res) => {
     .findByIdAndUpdate(itemId, { $set: { imgURL } })
     .orFail()
     .then((item) => res.status(200).send({ data: item }))
-    .catch(() =>
-      res
+    .catch((err) => {
+      if (err.name === "CastError") {
+        return res
+          .status(errors.BAD_REQUEST_ERROR_CODE)
+          .send({ message: "Invalid ID format" });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(errors.NOT_FOUND_ERROR_CODE)
+          .send({ message: "Resource not found" });
+      }
+      return res
         .status(errors.INTERNAL_SERVER_ERROR_CODE)
-        .send({ message: "An error has occurred on the server" })
-    );
+        .send({ message: "An error has occurred on the server" });
+    });
 };
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
@@ -58,7 +90,8 @@ const deleteItem = (req, res) => {
         return res
           .status(errors.BAD_REQUEST_ERROR_CODE)
           .send({ message: "No item found with this id." });
-      } else if (err.name === "DocumentNotFoundError") {
+      }
+      if (err.name === "DocumentNotFoundError") {
         return res
           .status(errors.NOT_FOUND_ERROR_CODE)
           .send({ message: `Item not found` });

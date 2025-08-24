@@ -1,5 +1,7 @@
 const User = require("../models/user");
+
 const errors = require("../utils/errors");
+
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => {

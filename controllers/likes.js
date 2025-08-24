@@ -1,5 +1,7 @@
 const clothingItem = require("../models/clothingItem");
+
 const errors = require("../utils/errors");
+
 module.exports.likeItem = (req, res) => {
   clothingItem
     .findByIdAndUpdate(
@@ -15,7 +17,7 @@ module.exports.likeItem = (req, res) => {
           .status(errors.NOT_FOUND_ERROR_CODE)
           .send({ message: "Item not found" });
       }
-      res.status(errors.OK_SUCCESS_CODE).send(item);
+      return res.status(errors.OK_SUCCESS_CODE).send(item);
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -23,7 +25,7 @@ module.exports.likeItem = (req, res) => {
           .status(errors.BAD_REQUEST_ERROR_CODE)
           .send({ message: "ItemId is not valid" });
       } else if (err.name === "DocumentNotFoundError") {
-        res
+        return res
           .status(errors.NOT_FOUND_ERROR_CODE)
           .send({ message: `Item is not exist` });
       }
@@ -47,11 +49,11 @@ module.exports.dislikeItem = (req, res) => {
           .status(errors.NOT_FOUND_ERROR_CODE)
           .send({ message: "item not exist" });
       }
-      res.send(item);
+      return res.status(errors.OK_SUCCESS_CODE).send(item);
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        res
+        return res
           .status(errors.BAD_REQUEST_ERROR_CODE)
           .send({ message: err.message });
       }
