@@ -1,0 +1,4 @@
+const CREATED_SUCCESS_CODE = 201;
+const OK_SUCCESS_CODE = 200;
+
+module.exports = { CREATED_SUCCESS_CODE, OK_SUCCESS_CODE };

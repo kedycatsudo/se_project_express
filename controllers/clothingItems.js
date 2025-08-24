@@ -11,8 +11,8 @@ const createItem = (req, res) => {
     })
     .catch(() => {
       res
-        .status(errors.BAD_REQUEST_ERROR_CODE)
-        .send({ message: "Error from createItem" });
+        .status(errors.INTERNAL_SERVER_ERROR_CODE)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -22,10 +22,13 @@ const getItems = (req, res) => {
     .then((items) => res.status(200).send(items))
     .catch((err) => {
       if (err.name === "CastError") {
-        res
+        return res
           .status(errors.BAD_REQUEST_ERROR_CODE)
           .send({ message: err.message });
       }
+      return res
+        .status(errors.INTERNAL_SERVER_ERROR_CODE)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -36,10 +39,10 @@ const updateItem = (req, res) => {
     .findByIdAndUpdate(itemId, { $set: { imgURL } })
     .orFail()
     .then((item) => res.status(200).send({ data: item }))
-    .catch((err) =>
+    .catch(() =>
       res
         .status(errors.INTERNAL_SERVER_ERROR_CODE)
-        .send({ message: "Error from updatItem", err })
+        .send({ message: "An error has occurred on the server" })
     );
 };
 const deleteItem = (req, res) => {
@@ -52,19 +55,17 @@ const deleteItem = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        res
+        return res
           .status(errors.BAD_REQUEST_ERROR_CODE)
-          .send({ message: "No item found with this id.", err });
+          .send({ message: "No item found with this id." });
       } else if (err.name === "DocumentNotFoundError") {
-        console.log(err.message);
-        res
+        return res
           .status(errors.NOT_FOUND_ERROR_CODE)
           .send({ message: `Item not found` });
-      } else {
-        res
-          .status(errors.INTERNAL_SERVER_ERROR_CODE)
-          .send({ message: "Error from deleteItem", err });
       }
+      return res
+        .status(errors.INTERNAL_SERVER_ERROR_CODE)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 module.exports = { createItem, getItems, updateItem, deleteItem };

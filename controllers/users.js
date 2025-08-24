@@ -5,11 +5,10 @@ const getUsers = (req, res) => {
     .then((users) => {
       res.status(errors.OK_SUCCESS_CODE).send(users);
     })
-    .catch((err) => {
-      console.error(err);
+    .catch(() => {
       res
         .status(errors.INTERNAL_SERVER_ERROR_CODE)
-        .send({ message: "An error occurred on the server" });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 const createUser = (req, res) => {
@@ -19,17 +18,14 @@ const createUser = (req, res) => {
       res.status(errors.CREATED_SUCCESS_CODE).send(user);
     })
     .catch((err) => {
-      console.error(err);
-      console.log(err.name);
       if (err.name === "ValidationError") {
         return res
           .status(errors.BAD_REQUEST_ERROR_CODE)
           .send({ message: err.message });
-      } else {
-        return res
-          .status(errors.INTERNAL_SERVER_ERROR_CODE)
-          .send({ message: err.message });
       }
+      return res
+        .status(errors.INTERNAL_SERVER_ERROR_CODE)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 const getUser = (req, res) => {
@@ -52,7 +48,7 @@ const getUser = (req, res) => {
       }
       return res
         .status(errors.INTERNAL_SERVER_ERROR_CODE)
-        .send({ message: "An error occurred on the server" });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 module.exports = { getUsers, createUser, getUser };

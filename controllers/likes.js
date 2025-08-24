@@ -26,10 +26,10 @@ module.exports.likeItem = (req, res) => {
         res
           .status(errors.NOT_FOUND_ERROR_CODE)
           .send({ message: `Item is not exist` });
-      } else
-        res
-          .status(errors.INTERNAL_SERVER_ERROR_CODE)
-          .send({ message: err.message });
+      }
+      return res
+        .status(errors.INTERNAL_SERVER_ERROR_CODE)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 module.exports.dislikeItem = (req, res) => {
@@ -54,10 +54,9 @@ module.exports.dislikeItem = (req, res) => {
         res
           .status(errors.BAD_REQUEST_ERROR_CODE)
           .send({ message: err.message });
-      } else {
-        res
-          .status(errors.BAD_REQUEST_ERROR_CODE)
-          .send({ message: err.message });
       }
+      return res
+        .status(errors.INTERNAL_SERVER_ERROR_CODE)
+        .send({ message: "An error has occurred on the server" });
     });
 };
