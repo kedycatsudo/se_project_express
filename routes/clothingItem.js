@@ -9,12 +9,11 @@ const {
   updateItem,
   deleteItem,
 } = require("../controllers/clothingItems");
+router.get("/", getItems);
 
 router.use(auth);
 
 router.post("/items", createItem);
-
-router.get("/", getItems);
 
 router.put("/:itemId", updateItem);
 

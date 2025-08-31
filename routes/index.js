@@ -29,7 +29,6 @@ router.use(auth);
 router.get("/users/me", getCurrentUser);
 router.patch("/users/me", updateProfile);
 
-router.use("/items", ItemRouter);
 router.post("/items", createItem);
 
 router.use((req, res) => {

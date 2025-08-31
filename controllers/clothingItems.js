@@ -1,6 +1,6 @@
 const clothingItem = require("../models/clothingItem");
 
-const succeesStatuses = require("../utils/succeesStatuses");
+const successStatuses = require("../utils/succeesStatuses");
 
 const errors = require("../utils/errors");
 
@@ -14,7 +14,7 @@ const createItem = (req, res) => {
       owner: req.user._id,
     })
     .then((item) => {
-      res.status(succeesStatuses.CREATED_SUCCESS_CODE).send({ data: item });
+      res.status(successStatuses.CREATED_SUCCESS_CODE).send({ data: item });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -31,7 +31,7 @@ const createItem = (req, res) => {
 const getItems = (req, res) => {
   clothingItem
     .find({})
-    .then((items) => res.status(200).send(items))
+    .then((items) => res.status(successStatuses.OK_SUCCESS_CODE).send(items))
     .catch((err) => {
       if (err.name === "CastError") {
         return res
@@ -46,11 +46,13 @@ const getItems = (req, res) => {
 
 const updateItem = (req, res) => {
   const { itemId } = req.params;
-  const { imgURL } = req.body;
+  const { imageUrl } = req.body;
   clothingItem
-    .findByIdAndUpdate(itemId, { $set: { imgURL } })
+    .findByIdAndUpdate(itemId, { $set: { imageUrl } })
     .orFail()
-    .then((item) => res.status(200).send({ data: item }))
+    .then((item) =>
+      res.status(successStatuses.OK_SUCCESS_CODE).send({ data: item })
+    )
     .catch((err) => {
       if (err.name === "CastError") {
         return res
@@ -75,13 +77,13 @@ const deleteItem = (req, res) => {
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
         return res
-          .status(403)
+          .status(errors.FORBIDDEN_ERROR_CODE)
           .send({ message: "You do not have permission to delete this item." });
       }
       return clothingItem.findByIdAndDelete(itemId).then(() => {
         res
-          .status(succeesStatuses.OK_SUCCESS_CODE)
-          .send({ message: `item  deleted.` });
+          .status(successStatuses.OK_SUCCESS_CODE)
+          .send({ message: `item deleted.` });
       });
     })
     .catch((err) => {

@@ -6,12 +6,12 @@ const { JWT_SECRET } = require("../utils/config");
 
 const jwt = require("jsonwebtoken");
 
-const successful = require("./../utils/succeesStatuses");
+const successStatuses = require("./../utils/succeesStatuses");
 
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => {
-      res.status(errors.OK_SUCCESS_CODE).send(users);
+      res.status(successStatuses.OK_SUCCESS_CODE).send(users);
     })
     .catch(() => {
       res
@@ -33,7 +33,7 @@ const createUser = (req, res) => {
       .then((user) => {
         const userObj = user.toObject();
         delete userObj.password;
-        res.status(successful.CREATED_SUCCESS_CODE).send(userObj);
+        res.status(successStatuses.CREATED_SUCCESS_CODE).send(userObj);
       })
       .catch((err) => {
         if (err.code === 11000) {
@@ -62,7 +62,7 @@ const getCurrentUser = (req, res) => {
       }
       const userObj = user.toObject();
       delete userObj.password;
-      return res.status(successful.OK_SUCCESS_CODE).send(userObj);
+      return res.status(successStatuses.OK_SUCCESS_CODE).send(userObj);
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -82,13 +82,13 @@ const login = (req, res) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.status(200).send({ token });
-      // authentication successful! user is in the user variable
+      res.status(successStatuses.OK_SUCCESS_CODE).send({ token });
+      // authentication successStatuses! user is in the user variable
     })
     .catch((err) => {
       // authentication error
       res
-        .status(errors.BAD_REQUEST_ERROR_CODE)
+        .status(errors.UNAUTHORIZED__ERROR_CODE)
         .send({ message: "Incorrect email or password" });
     });
 };
@@ -107,7 +107,7 @@ const updateProfile = (req, res) => {
       }
       const userObj = user.toObject();
       delete userObj.password;
-      return res.status(successful.OK_SUCCESS_CODE).send(userObj);
+      return res.status(successStatuses.OK_SUCCESS_CODE).send(userObj);
     })
     .catch((err) => {
       if (err.name === "ValidationError") {

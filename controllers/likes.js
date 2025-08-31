@@ -1,6 +1,6 @@
 const clothingItem = require("../models/clothingItem");
 
-const succesStatuss = require("../utils/succeesStatuses");
+const successStatuses = require("../utils/succeesStatuses");
 
 const errors = require("../utils/errors");
 
@@ -19,7 +19,7 @@ module.exports.likeItem = (req, res) => {
           .status(errors.NOT_FOUND_ERROR_CODE)
           .send({ message: "Item not found" });
       }
-      return res.status(succesStatuss.OK_SUCCESS_CODE).send(item);
+      return res.status(successStatuses.OK_SUCCESS_CODE).send(item);
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -52,7 +52,7 @@ module.exports.dislikeItem = (req, res) => {
           .status(errors.NOT_FOUND_ERROR_CODE)
           .send({ message: "item not exist" });
       }
-      return res.status(succesStatuss.OK_SUCCESS_CODE).send(item);
+      return res.status(successStatuses.OK_SUCCESS_CODE).send(item);
     })
     .catch((err) => {
       if (err.name === "CastError") {
