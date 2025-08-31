@@ -1,5 +1,7 @@
 const clothingItem = require("../models/clothingItem");
 
+const succesStatuss = require("../utils/succeesStatuses");
+
 const errors = require("../utils/errors");
 
 module.exports.likeItem = (req, res) => {
@@ -17,7 +19,7 @@ module.exports.likeItem = (req, res) => {
           .status(errors.NOT_FOUND_ERROR_CODE)
           .send({ message: "Item not found" });
       }
-      return res.status(errors.OK_SUCCESS_CODE).send(item);
+      return res.status(succesStatuss.OK_SUCCESS_CODE).send(item);
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -29,6 +31,7 @@ module.exports.likeItem = (req, res) => {
           .status(errors.NOT_FOUND_ERROR_CODE)
           .send({ message: `Item is not exist` });
       }
+      console.log(err);
       return res
         .status(errors.INTERNAL_SERVER_ERROR_CODE)
         .send({ message: "An error has occurred on the server" });
@@ -49,7 +52,7 @@ module.exports.dislikeItem = (req, res) => {
           .status(errors.NOT_FOUND_ERROR_CODE)
           .send({ message: "item not exist" });
       }
-      return res.status(errors.OK_SUCCESS_CODE).send(item);
+      return res.status(succesStatuss.OK_SUCCESS_CODE).send(item);
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -57,6 +60,7 @@ module.exports.dislikeItem = (req, res) => {
           .status(errors.BAD_REQUEST_ERROR_CODE)
           .send({ message: err.message });
       }
+      console.log(err);
       return res
         .status(errors.INTERNAL_SERVER_ERROR_CODE)
         .send({ message: "An error has occurred on the server" });

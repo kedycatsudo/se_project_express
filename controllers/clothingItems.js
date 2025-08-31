@@ -1,21 +1,6 @@
-// Hello, I realized that .catch block is repeating. I was thinking to write
-// a function that takes the catch as an argumant and filter this .catch((err) => {
-// if (err.name === "CastError") {
-// return res
-//  .status(errors.BAD_REQUEST_ERROR_CODE)
-//  .send({ message: "Invalid ID format" });
-// }
-// if (err.name === "ValidationError") {
-//  return res.status(errors.BAD_REQUEST_ERROR_CODE).send({ message: "Validation failed" });
-//  }
-//  if (err.name === "DocumentNotFoundError") {
-//    return res.status(errors.NOT_FOUND_ERROR_CODE).send({ message: "Resource not found" });
-//  }
-//  return res.status(errors.INTERNAL_SERVER_ERROR_CODE).send({ message: "An error has occurred on the server" });
-// });
-// and return the neccesary one. That would fix visual problem in the code, that would make it also dynamic.
-
 const clothingItem = require("../models/clothingItem");
+
+const succeesStatuses = require("../utils/succeesStatuses");
 
 const errors = require("../utils/errors");
 
@@ -23,13 +8,13 @@ const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   clothingItem
     .create({
-      name: req.body.name,
-      weather: req.weather,
-      imageUrl: req.imageUrl,
+      name: name,
+      weather: weather,
+      imageUrl: imageUrl,
       owner: req.user._id,
     })
     .then((item) => {
-      res.status(errors.CREATED_SUCCESS_CODE).send({ data: item });
+      res.status(succeesStatuses.CREATED_SUCCESS_CODE).send({ data: item });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -85,10 +70,19 @@ const updateItem = (req, res) => {
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
   clothingItem
-    .findByIdAndDelete(itemId)
+    .findById(itemId)
     .orFail()
-    .then(() => {
-      res.status(errors.OK_SUCCESS_CODE).send({ message: `item  deleted.` });
+    .then((item) => {
+      if (!item.owner.equals(req.user._id)) {
+        return res
+          .status(403)
+          .send({ message: "You do not have permission to delete this item." });
+      }
+      return clothingItem.findByIdAndDelete(itemId).then(() => {
+        res
+          .status(succeesStatuses.OK_SUCCESS_CODE)
+          .send({ message: `item  deleted.` });
+      });
     })
     .catch((err) => {
       if (err.name === "CastError") {

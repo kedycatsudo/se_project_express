@@ -22,7 +22,8 @@ const getUsers = (req, res) => {
 const bcrypt = require("bcryptjs");
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
-  if (!password || typeof password !== "string" || password.length < 8) {
+
+  if (!password || typeof password !== "string" || password.length < 3) {
     return res
       .status(errors.BAD_REQUEST_ERROR_CODE)
       .send({ message: "Password is required and must fill" });
@@ -32,9 +33,7 @@ const createUser = (req, res) => {
       .then((user) => {
         const userObj = user.toObject();
         delete userObj.password;
-        res
-          .status(successful.CREATED_SUCCESS_CODE)
-          .send({ userObj, message: "User created successfully" });
+        res.status(successful.CREATED_SUCCESS_CODE).send(userObj);
       })
       .catch((err) => {
         if (err.code === 11000) {
@@ -54,16 +53,16 @@ const createUser = (req, res) => {
   );
 };
 const getCurrentUser = (req, res) => {
-  const { userId } = req.user;
-
-  User.findById(userId)
+  User.findById(req.user._id)
     .then((user) => {
       if (!user) {
         return res
           .status(errors.NOT_FOUND_ERROR_CODE)
           .send({ message: "User Not Found" });
       }
-      return res.status(errors.OK_SUCCESS_CODE).send(user);
+      const userObj = user.toObject();
+      delete userObj.password;
+      return res.status(successful.OK_SUCCESS_CODE).send(userObj);
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -93,4 +92,37 @@ const login = (req, res) => {
         .send({ message: "Incorrect email or password" });
     });
 };
-module.exports = { getUsers, createUser, getCurrentUser, login };
+const updateProfile = (req, res) => {
+  const { name, avatar } = req.body;
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, avatar },
+    { new: true, runValidators: true }
+  )
+    .then((user) => {
+      if (!user) {
+        return res
+          .status(errors.NOT_FOUND_ERROR_CODE)
+          .send({ message: "User Not Found" });
+      }
+      const userObj = user.toObject();
+      delete userObj.password;
+      return res.status(successful.OK_SUCCESS_CODE).send(userObj);
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res
+          .status(errors.BAD_REQUEST_ERROR_CODE)
+          .send({ message: "Validation failed" });
+      }
+      if (err.name === "CastError") {
+        return res
+          .status(errors.BAD_REQUEST_ERROR_CODE)
+          .send({ message: err.message });
+      }
+      return res
+        .status(errors.INTERNAL_SERVER_ERROR_CODE)
+        .send({ message: "An error has occurred on the server" });
+    });
+};
+module.exports = { getUsers, createUser, getCurrentUser, login, updateProfile };
