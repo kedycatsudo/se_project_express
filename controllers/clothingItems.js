@@ -22,7 +22,12 @@ const errors = require("../utils/errors");
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   clothingItem
-    .create({ name, weather, imageUrl, owner: req.user._id })
+    .create({
+      name: req.body.name,
+      weather: req.weather,
+      imageUrl: req.imageUrl,
+      owner: req.user._id,
+    })
     .then((item) => {
       res.status(errors.CREATED_SUCCESS_CODE).send({ data: item });
     })
