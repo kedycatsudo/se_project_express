@@ -23,10 +23,11 @@ module.exports.likeItem = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        res
+        return res
           .status(errors.BAD_REQUEST_ERROR_CODE)
           .send({ message: "ItemId is not valid" });
-      } else if (err.name === "DocumentNotFoundError") {
+      }
+      if (err.name === "DocumentNotFoundError") {
         return res
           .status(errors.NOT_FOUND_ERROR_CODE)
           .send({ message: `Item is not exist` });

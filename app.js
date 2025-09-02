@@ -1,12 +1,15 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const indexRouter = require("./routes/index");
 const cors = require("cors");
 
+const express = require("express");
+
 const app = express();
+app.use(cors());
+
+const mongoose = require("mongoose");
+const indexRouter = require("./routes/index");
+
 const { PORT = 3001 } = process.env;
 app.use(express.json());
-app.use(cors());
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
   .then(() => {

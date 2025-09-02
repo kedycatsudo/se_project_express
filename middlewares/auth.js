@@ -1,7 +1,8 @@
-const { JWT_SECRET } = require("../utils/config");
 const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = require("../utils/config");
 
 const errors = require("../utils/errors");
+
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith("Bearer")) {
@@ -21,6 +22,6 @@ module.exports = (req, res, next) => {
       .send({ message: "Authorization required" });
   }
   req.user = payload; // store payload in request
-  next(); // pass control to the next middleware
+  return next(); // pass control to the next middleware
   // all the auth will go here
 };

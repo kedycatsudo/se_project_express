@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
       message: "Email is not valid.",
     },
   },
-  password: { type: String, required: true, minlength: 8, select: false },
+  password: { type: String, required: true, select: false },
 });
 const bcrypt = require("bcryptjs");
 

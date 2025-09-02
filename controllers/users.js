@@ -1,25 +1,15 @@
+const jwt = require("jsonwebtoken");
+
+const bcrypt = require("bcryptjs");
+
 const User = require("../models/user");
 
 const errors = require("../utils/errors");
 
 const { JWT_SECRET } = require("../utils/config");
 
-const jwt = require("jsonwebtoken");
+const successStatuses = require("../utils/succeesStatuses");
 
-const successStatuses = require("./../utils/succeesStatuses");
-
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => {
-      res.status(successStatuses.OK_SUCCESS_CODE).send(users);
-    })
-    .catch(() => {
-      res
-        .status(errors.INTERNAL_SERVER_ERROR_CODE)
-        .send({ message: "An error has occurred on the server" });
-    });
-};
-const bcrypt = require("bcryptjs");
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
@@ -28,17 +18,17 @@ const createUser = (req, res) => {
       .status(errors.BAD_REQUEST_ERROR_CODE)
       .send({ message: "Password is required and must fill" });
   }
-  bcrypt.hash(password, 10).then((hash) =>
+  return bcrypt.hash(password, 10).then((hash) =>
     User.create({ name, avatar, email, password: hash })
       .then((user) => {
         const userObj = user.toObject();
         delete userObj.password;
-        res.status(successStatuses.CREATED_SUCCESS_CODE).send(userObj);
+        return res.status(successStatuses.CREATED_SUCCESS_CODE).send(userObj);
       })
       .catch((err) => {
         if (err.code === 11000) {
           return res
-            .status(409)
+            .status(errors.BAD_CONFLICT_ERROR_CODE)
             .send({ message: "A user with this email already exist" });
         }
         if (err.name === "ValidationError") {
@@ -77,6 +67,11 @@ const getCurrentUser = (req, res) => {
 };
 const login = (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res
+      .status(errors.BAD_REQUEST_ERROR_CODE)
+      .send({ message: "The password and email fields are required" });
+  }
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
@@ -89,7 +84,7 @@ const login = (req, res) => {
       // authentication error
       res
         .status(errors.UNAUTHORIZED__ERROR_CODE)
-        .send({ message: "Incorrect email or password" });
+        .send({ err, message: "Incorrect email or password" });
     });
 };
 const updateProfile = (req, res) => {
@@ -125,4 +120,4 @@ const updateProfile = (req, res) => {
         .send({ message: "An error has occurred on the server" });
     });
 };
-module.exports = { getUsers, createUser, getCurrentUser, login, updateProfile };
+module.exports = { createUser, getCurrentUser, login, updateProfile };
