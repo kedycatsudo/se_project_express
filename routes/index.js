@@ -4,11 +4,15 @@ const errors = require("../utils/errors");
 
 const ItemRouter = require("./clothingItem");
 
+const { createUser, login } = require("../controllers/users");
+
 router.use("/items", ItemRouter);
 
 const userRouter = require("./users");
 
 router.use("/users", userRouter);
+router.post("/signup", createUser);
+router.post("/signin", login);
 
 router.use((req, res) => {
   res

@@ -81,8 +81,13 @@ const login = (req, res) => {
       // authentication successStatuses! user is in the user variable
     })
     .catch((err) => {
+      if (err.code === 401) {
+        res
+          .status(errors.UNAUTHORIZED__ERROR_CODE)
+          .send({ message: "Unauthorize" });
+      }
       // authentication error
-      res
+      return res
         .status(errors.UNAUTHORIZED__ERROR_CODE)
         .send({ err, message: "Incorrect email or password" });
     });

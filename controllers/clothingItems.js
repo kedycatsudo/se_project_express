@@ -44,25 +44,33 @@ const getItems = (req, res) => {
     });
 };
 
-const updateItem = (req, res) => {
+const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  const { imageUrl } = req.body;
   clothingItem
-    .findByIdAndUpdate(itemId, { $set: { imageUrl } })
+    .findById(itemId)
     .orFail()
-    .then((item) =>
-      res.status(successStatuses.OK_SUCCESS_CODE).send({ data: item })
-    )
+    .then((item) => {
+      if (!item.owner.equals(req.user._id)) {
+        return res
+          .status(403)
+          .send({ message: "You do not have permission to delete this item." });
+      }
+      return clothingItem.findByIdAndDelete(itemId).then(() => {
+        res
+          .status(successStatuses.OK_SUCCESS_CODE)
+          .send({ message: `item deleted.` });
+      });
+    })
     .catch((err) => {
       if (err.name === "CastError") {
         return res
           .status(errors.BAD_REQUEST_ERROR_CODE)
-          .send({ message: "Invalid ID format" });
+          .send({ message: "No item found with this id." });
       }
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(errors.NOT_FOUND_ERROR_CODE)
-          .send({ message: "Resource not found" });
+          .send({ message: `Item not found` });
       }
       return res
         .status(errors.INTERNAL_SERVER_ERROR_CODE)
@@ -70,4 +78,4 @@ const updateItem = (req, res) => {
     });
 };
 
-module.exports = { createItem, getItems, updateItem };
+module.exports = { createItem, getItems, deleteItem };
