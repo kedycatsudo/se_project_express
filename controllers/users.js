@@ -81,14 +81,14 @@ const login = (req, res) => {
       // authentication successStatuses! user is in the user variable
     })
     .catch((err) => {
-      if (err.code === 401) {
+      if (err.message === "Incorrect email or password") {
         res
           .status(errors.UNAUTHORIZED__ERROR_CODE)
           .send({ message: "Unauthorize" });
       }
       // authentication error
       return res
-        .status(errors.UNAUTHORIZED__ERROR_CODE)
+        .status(errors.INTERNAL_SERVER_ERROR_CODE)
         .send({ err, message: "Incorrect email or password" });
     });
 };

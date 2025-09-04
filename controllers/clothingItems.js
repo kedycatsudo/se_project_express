@@ -52,7 +52,7 @@ const deleteItem = (req, res) => {
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
         return res
-          .status(403)
+          .status(errors.FORBIDDEN_ERROR_CODE)
           .send({ message: "You do not have permission to delete this item." });
       }
       return clothingItem.findByIdAndDelete(itemId).then(() => {
