@@ -12,6 +12,7 @@ const {
 } = require("../middlewares/errors/custom_errors");
 
 const createUser = (req, res, next) => {
+  console.log("Signup body:", req.body);
   const { name, avatar, email, password } = req.body;
 
   if (!password || typeof password !== "string" || password.length < 3) {

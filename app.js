@@ -10,6 +10,14 @@ const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const app = express();
 
+// Allow CORS from both React dev ports
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:3002"],
+    credentials: true,
+  })
+);
+app.use(express.json());
 const routes = require("./routes");
 
 const mongoose = require("mongoose");
@@ -28,10 +36,8 @@ mongoose
 app.use(routes);
 app.use(requestLogger); // log all requests
 
-app.use(express.json());
 app.use(errorLogger); // log errors
 
-app.use(cors());
 app.use("/", indexRouter);
 app.use(errors());
 app.use(errorHandler);
