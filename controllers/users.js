@@ -12,7 +12,6 @@ const {
 } = require("../middlewares/errors/custom_errors");
 
 const createUser = (req, res, next) => {
-  console.log("Signup body:", req.body);
   const { name, avatar, email, password } = req.body;
 
   if (!password || typeof password !== "string" || password.length < 3) {
@@ -23,7 +22,7 @@ const createUser = (req, res, next) => {
     );
   }
 
-  bcrypt
+  return bcrypt
     .hash(password, 10)
     .then((hash) => User.create({ name, avatar, email, password: hash }))
     .then((user) => {
@@ -50,7 +49,7 @@ const getCurrentUser = (req, res, next) => {
       }
       const userObj = user.toObject();
       delete userObj.password;
-      res.status(successStatuses.OK_SUCCESS_CODE).send(userObj);
+      return res.status(successStatuses.OK_SUCCESS_CODE).send(userObj);
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -69,7 +68,7 @@ const login = (req, res, next) => {
     );
   }
 
-  User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
@@ -98,7 +97,7 @@ const updateProfile = (req, res, next) => {
       }
       const userObj = user.toObject();
       delete userObj.password;
-      res.status(successStatuses.OK_SUCCESS_CODE).send(userObj);
+      return res.status(successStatuses.OK_SUCCESS_CODE).send(userObj);
     })
     .catch((err) => {
       if (err.name === "ValidationError") {

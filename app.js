@@ -2,6 +2,8 @@ const cors = require("cors");
 
 const { errors } = require("celebrate");
 
+const mongoose = require("mongoose");
+
 const express = require("express");
 
 const errorHandler = require("./middlewares/errorHandler");
@@ -20,7 +22,6 @@ app.use(
 app.use(express.json());
 const routes = require("./routes");
 
-const mongoose = require("mongoose");
 const indexRouter = require("./routes/index");
 
 const { PORT = 3001 } = process.env;
