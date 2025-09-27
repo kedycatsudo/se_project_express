@@ -36,6 +36,12 @@ mongoose
     console.error(e);
   });
 
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
+
 app.use(routes);
 app.use(requestLogger); // log all requests
 
