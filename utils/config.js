@@ -1,3 +1,5 @@
-const JWT_SECRET = "your-very-secret-key"; // Use a strong, random string in production
+const { JWT_SECRET = "super-strong-secret" } = process.env;
 
-module.exports = { JWT_SECRET };
+module.exports = {
+  JWT_SECRET,
+};
